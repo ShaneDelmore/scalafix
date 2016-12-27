@@ -34,3 +34,11 @@ import scala.concurrent.Future
 trait A {
   val num = 1
 }
+<<< ONLY tpe rox
+object a{
+  val r = cats.data.Xor.right[Int, String]("")
+}
+>>>
+object a {
+  val r = cats.data.Xor.right[Int, String]("")
+}

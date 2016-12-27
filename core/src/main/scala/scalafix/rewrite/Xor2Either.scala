@@ -17,6 +17,11 @@ case object Xor2Either extends Rewrite {
       ReplaceType(t"cats.data.Xor.Right", t"scala.util.Either.Right", "Right")
     )
 
+    ast.collect {
+      case t if semanticApi.tpe(t).isDefined =>
+        logger.info(s"Got .tpe=${semanticApi.tpe(t)} for tree=$t")
+    }
+
     //Add in some method replacements
     val replacementTerms = List(
       ReplaceTerm(q"cats.data.Xor.Right.apply",

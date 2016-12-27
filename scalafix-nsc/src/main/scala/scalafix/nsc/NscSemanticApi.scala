@@ -62,7 +62,7 @@ trait NscSemanticApi extends ReflectToolkit {
 
       val parsed = dialect(gtree.toString()).parse[m.Type]
       parsed match {
-        case m.Parsed.Success(ast) =>
+        case m.parsers.Parsed.Success(ast) =>
           builder(gtree.pos.point) = cleanUp(ast)
         case _ =>
       }
@@ -138,19 +138,38 @@ trait NscSemanticApi extends ReflectToolkit {
         }
       }
 
+      private def parseToOption[T <: Tree](parse: Parse[T],
+                                           dialect: Dialect,
+                                           input: String): Option[T] = {
+        import scala.meta._
+        parse(m.Input.String(input), dialect) match {
+          case m.parsers.Parsed.Success(x) => Some(x)
+          case _ => None
+        }
+      }
+
+      private def matchingTrees(tree: m.Tree): Seq[g.Tree] =
+        collect[g.Tree](unit.body) {
+          case t if t.pos.matches(tree.pos) => t
+        }
+
       override def desugared[T <: Tree](tree: T)(
           implicit parse: Parse[T]): Option[T] = {
-        val result = collect[Option[T]](unit.body) {
-//          case t if { logger.elem(t.toString(), g.showRaw(t)); false } => None
-          case t if t.pos.matches(tree.pos) =>
-            import scala.meta._
-            parse(m.Input.String(t.toString()), config.dialect) match {
-              case m.parsers.Parsed.Success(x) => Some(x)
-              case _ => None
-            }
-        }.flatten
-//        logger.elem(result)
-        result.headOption
+        val results = matchingTrees(tree).flatMap(t =>
+          parseToOption(parse, config.dialect, t.toString()))
+        results.headOption
+      }
+
+      override def tpe(tree: Tree): Option[Type] = {
+        val results = matchingTrees(tree)
+          .withFilter(x => x.tpe != null)
+          .flatMap { t =>
+            logger.elem(tree, t.tpe)
+            parseToOption(m.parsers.Parse.parseType,
+                          config.dialect,
+                          t.tpe.toString())
+          }
+        results.headOption
       }
     }
   }
