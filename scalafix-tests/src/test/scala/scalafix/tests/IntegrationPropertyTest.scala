@@ -1,10 +1,8 @@
 package scalafix.tests
 
 import scala.util.matching.Regex
-import scalafix.rewrite.ExplicitImplicit
-import scalafix.rewrite.Rewrite
+import scalafix.rewrite.{ExplicitImplicit, Rewrite, Xor2Either}
 import scalafix.util.logger
-
 import java.io.File
 
 import ammonite.ops.Path
@@ -125,79 +123,91 @@ abstract class IntegrationPropertyTest(t: ItTest, skip: Boolean = false)
   check()
 }
 
+class Cornichon
+    extends IntegrationPropertyTest(
+      ItTest(
+        name = "cornichon",
+        repo = "https://github.com/agourlay/cornichon.git",
+        hash = "9320fa471d66b311925eb5a8df4b24e299f4af0e",
+        rewrites = Seq(Xor2Either)
+      ),
+      skip = false
+    )
+
 class Circe
     extends IntegrationPropertyTest(
       ItTest(
         name = "circe",
         repo = "https://github.com/circe/circe.git",
-        hash = "717e1d7d5d146cbd0455770771261e334f419b14"
+        hash = "717e1d7d5d146cbd0455770771261e334f419b14",
+        rewrites = Seq(Xor2Either)
       ),
       skip = false
     )
 
-class Slick
-    extends IntegrationPropertyTest(
-      ItTest(
-        name = "slick",
-        repo = "https://github.com/slick/slick.git",
-        hash = "bd3c24be419ff2791c123067668c81e7de858915"
-      ),
-      skip = true
-    )
-
-class Scalaz
-    extends IntegrationPropertyTest(
-      ItTest(
-        name = "scalaz",
-        repo = "https://github.com/scalaz/scalaz.git",
-        hash = "cba156fb2f1f178dbaa32cbca21e95f8199d2f91"
-      ),
-      skip = true // kind-projector causes problems.
-    )
-
-class Cats
-    extends IntegrationPropertyTest(
-      ItTest(
-        name = "cats",
-        repo = "https://github.com/typelevel/cats.git",
-        hash = "31080daf3fd8c6ddd80ceee966a8b3eada578198"
-      ))
-
-class Monix
-    extends IntegrationPropertyTest(
-      ItTest(
-        name = "monix",
-        repo = "https://github.com/monix/monix.git",
-        hash = "45c15b5989685668f5ad7ec886af6b74b881a7b4"
-      ),
-      // monix fails on reporter info messages and scala.meta has a parser bug.
-      // Pipe.scala:32: error: identifier expected but ] found
-      // [error] extends ObservableLike[O, ({type ?[+?] = Pipe[I, ?]})#?] {
-      skip = true
-    )
-
-class ScalaJs
-    extends IntegrationPropertyTest(
-      ItTest(
-        name = "Scala.js",
-        repo = "https://github.com/scala-js/scala-js.git",
-        hash = "8917b5a9bd8fb2175a112fc15c761050eeb4099f",
-        cmds = Seq(
-          Command("set scalafixEnabled in Global := true"),
-          Command("compiler/test:compile"),
-          Command("examples/test:compile")
-        )
-      ),
-      skip = true // GenJsCode is hard: import renames + dependent types
-    )
-
-class ScalacheckShapeless
-    extends IntegrationPropertyTest(
-      ItTest(
-        name = "scalacheck-shapeless",
-        repo = "https://github.com/alexarchambault/scalacheck-shapeless.git",
-        hash = "bb25ecee23c42148f66d9b27920a89ba5cc189d2",
-        addCoursier = false
-      ),
-      skip = true // coursier can't resolve locally published snapshot on ci, sbt.ivy.home is not read.
-    )
+//class Slick
+//    extends IntegrationPropertyTest(
+//      ItTest(
+//        name = "slick",
+//        repo = "https://github.com/slick/slick.git",
+//        hash = "bd3c24be419ff2791c123067668c81e7de858915"
+//      ),
+//      skip = true
+//    )
+//
+//class Scalaz
+//    extends IntegrationPropertyTest(
+//      ItTest(
+//        name = "scalaz",
+//        repo = "https://github.com/scalaz/scalaz.git",
+//        hash = "cba156fb2f1f178dbaa32cbca21e95f8199d2f91"
+//      ),
+//      skip = true // kind-projector causes problems.
+//    )
+//
+//class Cats
+//    extends IntegrationPropertyTest(
+//      ItTest(
+//        name = "cats",
+//        repo = "https://github.com/typelevel/cats.git",
+//        hash = "31080daf3fd8c6ddd80ceee966a8b3eada578198"
+//      ))
+//
+//class Monix
+//    extends IntegrationPropertyTest(
+//      ItTest(
+//        name = "monix",
+//        repo = "https://github.com/monix/monix.git",
+//        hash = "45c15b5989685668f5ad7ec886af6b74b881a7b4"
+//      ),
+//      // monix fails on reporter info messages and scala.meta has a parser bug.
+//      // Pipe.scala:32: error: identifier expected but ] found
+//      // [error] extends ObservableLike[O, ({type ?[+?] = Pipe[I, ?]})#?] {
+//      skip = true
+//    )
+//
+//class ScalaJs
+//    extends IntegrationPropertyTest(
+//      ItTest(
+//        name = "Scala.js",
+//        repo = "https://github.com/scala-js/scala-js.git",
+//        hash = "8917b5a9bd8fb2175a112fc15c761050eeb4099f",
+//        cmds = Seq(
+//          Command("set scalafixEnabled in Global := true"),
+//          Command("compiler/test:compile"),
+//          Command("examples/test:compile")
+//        )
+//      ),
+//      skip = true // GenJsCode is hard: import renames + dependent types
+//    )
+//
+//class ScalacheckShapeless
+//    extends IntegrationPropertyTest(
+//      ItTest(
+//        name = "scalacheck-shapeless",
+//        repo = "https://github.com/alexarchambault/scalacheck-shapeless.git",
+//        hash = "bb25ecee23c42148f66d9b27920a89ba5cc189d2",
+//        addCoursier = false
+//      ),
+//      skip = true // coursier can't resolve locally published snapshot on ci, sbt.ivy.home is not read.
+//    )

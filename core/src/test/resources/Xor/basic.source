@@ -34,7 +34,7 @@ import scala.concurrent.Future
 trait A {
   val num = 1
 }
-<<< ONLY tpe rox
+<<< tpe rox
 object a{
   val r = cats.data.Xor.right[Int, String]("")
 }
@@ -42,3 +42,28 @@ object a{
 object a {
   val r = cats.data.Xor.right[Int, String]("")
 }
+<<< cornichonError
+import java.io.{ PrintWriter, StringWriter }
+import scala.util.control.NoStackTrace
+trait CornichonError extends Exception with NoStackTrace {
+  def msg: String
+
+  override def getMessage = msg
+}
+object CornichonError {
+  def genStacktrace(exception: Throwable) = {
+    val sw = new StringWriter()
+    val pw = new PrintWriter(sw)
+    exception.printStackTrace(pw)
+    sw.toString
+  }
+  def fromThrowable(exception: Throwable): CornichonError = exception match {
+    case ce: CornichonError ⇒ ce
+    case _                  ⇒ StepExecutionError(exception)
+  }
+}
+case class StepExecutionError[A](e: Throwable) extends CornichonError {
+  val msg = s"exception thrown '${CornichonError.genStacktrace(e)}'"
+}
+>>>
+import scala.util.control.NoStackTrace
