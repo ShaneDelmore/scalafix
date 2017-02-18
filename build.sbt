@@ -166,6 +166,11 @@ lazy val `scalafix-nsc` = project
       "com.lihaoyi" %% "ammonite-ops" % Build.ammoniteV % Test,
       // integration property tests
       "org.typelevel"      %% "catalysts-platform" % "0.0.5"    % Test,
+      "co.fs2"             %% "fs2-cats"           % "0.3.0"    % Test,
+      "co.fs2"             %% "fs2-core"           % "0.9.2"    % Test,
+      "org.typelevel"      %% "cats"               % "0.9.0"    % Test,
+      "org.scalaz"         %% "scalaz-core"        % "7.2.7"    % Test,
+      "org.typelevel"      %% "catalysts-platform" % "0.0.5"    % Test,
       "com.typesafe.slick" %% "slick"              % "3.2.0-M2" % Test,
       "com.chuusai"        %% "shapeless"          % "2.3.2"    % Test,
       "org.scalacheck"     %% "scalacheck"         % "1.13.4"   % Test

@@ -23,7 +23,8 @@ object Rewrite {
     VolatileLazyVal
   )
   val semanticRewrites: Seq[Rewrite] = Seq(
-    ExplicitImplicit,
+    Catz,
+    ExplicitImplicit
   )
   val allRewrites: Seq[Rewrite] = syntaxRewrites ++ semanticRewrites
   val defaultRewrites: Seq[Rewrite] =
