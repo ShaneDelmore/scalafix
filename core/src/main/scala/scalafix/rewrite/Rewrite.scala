@@ -24,7 +24,6 @@ object Rewrite {
   )
   val semanticRewrites: Seq[Rewrite] = Seq(
     ExplicitImplicit,
-    Xor2Either
   )
   val allRewrites: Seq[Rewrite] = syntaxRewrites ++ semanticRewrites
   val defaultRewrites: Seq[Rewrite] =
